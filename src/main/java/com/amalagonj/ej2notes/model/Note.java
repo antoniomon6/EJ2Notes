@@ -13,9 +13,9 @@ public class Note {
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El título no puede estar vacío") // ¡Nuevo!
+    @NotBlank(message = "El título no puede estar vacío") 
     private String title;
-    @NotBlank(message = "El contenido no puede estar vacío") // ¡Nuevo!
+    @NotBlank(message = "El contenido no puede estar vacío")
     private String content;
 
     @CreationTimestamp
