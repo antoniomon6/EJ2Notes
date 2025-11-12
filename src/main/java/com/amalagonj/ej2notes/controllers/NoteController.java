@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,16 +18,24 @@ public class NoteController {
     private NoteRepository noteRepository;
 
     @GetMapping
-    public List<Note> getAllNotes() {
-        return noteRepository.findAll();
+    public List<Note> getAllNotes(@RequestParam(required = false) String keyword) {
+        if (keyword != null && !keyword.isEmpty()) {
+            return noteRepository.findByTitleContainingIgnoreCase(keyword);
+        } else {
+            return noteRepository.findAll();
+        }
     }
+
     @GetMapping("/imp")
     public List<Note> getAllNotesImp() {
         return noteRepository.findByTitleContainingIgnoreCase("importante");
     }
 
     @PostMapping
-    public Note createNote(@RequestBody Note note) {
+    public Note createNote(@Valid @RequestBody Note note) {
+        if (note.getContent().toUpperCase().contains("DUPLICADO")) {
+            throw new ConcurrencyConflictException("El contenido no puede contener la palabra 'DUPLICADO'");
+        }
         return noteRepository.save(note);
     }
 

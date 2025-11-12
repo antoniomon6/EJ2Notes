@@ -1,5 +1,6 @@
 package com.amalagonj.ej2notes.controllers;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.amalagonj.ej2notes.exception.ConcurrencyConflictException;
@@ -39,17 +40,30 @@ public class PageController {
     }
 
     @GetMapping("/list-notes")
-    public String showAllNotes(Model model) {
-        // Carga todas las notas de la BBDD [cite: 94]
-        List<Note> notes = noteRepository.findAll();
-        model.addAttribute("notes", notes); // Añade la lista al modelo [cite: 95]
-        return "list_notes"; // Devuelve list_notes.html [cite: 97]
+    public String showAllNotes(@RequestParam(required = false) String keyword, Model model) {
+        List<Note> notes;
+        if (keyword != null && !keyword.isEmpty()) {
+            notes = noteRepository.findByTitleContainingIgnoreCase(keyword);
+        } else {
+            notes = noteRepository.findAll();
+        }
+        Collections.sort(notes);
+        int numnotas = notes.size();
+        model.addAttribute("numNotas", numnotas);
+        model.addAttribute("notes", notes);
+        return "list_notes";
     }
 
     @GetMapping("/delete-note")
     public String showDeleteNotePage() {
         // Simplemente muestra la página con el formulario JS
         return "delete_note"; // Devuelve delete_note.html [cite: 157, 160]
+    }
+
+    @GetMapping("/borrar-nota/{id}")
+    public String deleteNote(@PathVariable Long id) {
+        noteRepository.deleteById(id);
+        return "redirect:/list-notes";
     }
 
     @PostMapping("/notes-form")
@@ -69,7 +83,7 @@ public class PageController {
     @GetMapping("/test-500")
     public String triggerInternalError() {
         String s = null;
-        s.length(); // Esto fuerza un NullPointerException (HTTP 500)
+        s.length();
         return "menu";
     }
 
@@ -109,4 +123,3 @@ public class PageController {
 
     }
 }
-

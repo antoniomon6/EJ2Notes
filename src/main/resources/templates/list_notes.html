@@ -6,22 +6,47 @@
 </head>
 <body>
     <h1>Lista de Notas</h1>
+
+    <!-- Formulario de búsqueda -->
+    <form th:action="@{/list-notes}" method="get" style="margin-bottom: 15px;">
+        <input type="text" name="keyword" th:value="${param.keyword}" placeholder="Buscar por título..."/>
+        <button type="submit">Buscar</button>
+    </form>
+
     <table border="1">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Título</th>
                 <th>Contenido</th>
+                <th>Editar</th>
+                <th>Borrar</th>
             </tr>
         </thead>
         <tbody>
-            <tr th:each="note: ${notes}"> 
+            <!-- Si no hay notas, muestra un mensaje -->
+            <tr th:if="${#lists.isEmpty(notes)}">
+                <td colspan="5">No se encontraron notas.</td>
+            </tr>
+            <!-- Itera sobre las notas si la lista no está vacía -->
+            <tr th:each="note : ${notes}">
                 <td th:text="${note.id}"></td>
                 <td th:text="${note.title}"></td>
                 <td th:text="${note.content}"></td>
+                <td>
+                    <a th:href="@{/edit-note/{id}(id=${note.id})}">Editar</a>
+                </td>
+                <td>
+                    <a th:href="@{/borrar-nota/{id}(id=${note.id})}">Borrar</a>
+                </td>
             </tr>
         </tbody>
     </table>
+
+    <p>
+        <strong>Total de notas mostradas:</strong> <span th:text="${numNotas}"></span>
+    </p>
+
     <p><a th:href="@{/menu}">Volver al menú</a></p>
 </body>
 </html>

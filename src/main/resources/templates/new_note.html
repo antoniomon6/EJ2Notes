@@ -3,18 +3,36 @@
 <head>
     <title>Añadir Nueva Nota</title>
     <meta charset="UTF-8">
+    <style>
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
     <h1>Añadir Nueva Nota</h1>
-    <form action="#" th:action="@{/create-note}" th:object="${note}" method="post">
-        <label for="title">Título:</label>
-        <input type="text" id="title" name="title" th:field="*{title}"/><br><br>
 
-        <label for="content">Contenido:</label>
-        <textarea id="content" name="content" th:field="*{content}"></textarea><br><br>
-
+    <!-- Cambia la acción para que apunte al endpoint con validación -->
+    <form action="#" th:action="@{/notes-form}" th:object="${note}" method="post">
+        <div>
+            <label for="title">Título:</label><br>
+            <input type="text" id="title" th:field="*{title}" style="width: 300px;"/>
+            <!-- Contenedor para el mensaje de error del título -->
+            <div class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+        </div>
+        <br>
+        <div>
+            <label for="content">Contenido:</label><br>
+            <textarea id="content" th:field="*{content}" rows="5" style="width: 300px;"></textarea>
+            <!-- Contenedor para el mensaje de error del contenido -->
+            <div class="error" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
+        </div>
+        <br>
         <button type="submit">Guardar Nota</button>
     </form>
+
     <p><a th:href="@{/menu}">Volver al menú</a></p>
 </body>
 </html>

@@ -1,21 +1,31 @@
 package com.amalagonj.ej2notes.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-public class Note {
+public class Note implements Comparable<Note>{
+    @Override
+    public int compareTo(Note o) {
+        return o.createdAt.compareTo(createdAt);
+    }
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El título no puede estar vacío") 
+    @Column(unique = true)
+    @Size(min = 3, message = "El título debe tener al menos 3 caracteres")
+    @NotBlank(message = "El título no puede estar vacío")
     private String title;
+
     @NotBlank(message = "El contenido no puede estar vacío")
+    @Size(min = 10, message = "El contenido debe tener al menos 10 caracteres")
     private String content;
 
     @CreationTimestamp
@@ -44,4 +54,5 @@ public class Note {
     public void setContent(String content) {
         this.content = content;
     }
+
 }
